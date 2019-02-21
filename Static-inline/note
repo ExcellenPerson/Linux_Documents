@@ -1,0 +1,11 @@
+--- 0001/drivers/gpu/drm/rcar-du/rcar_du_vsp.h
++++ work/drivers/gpu/drm/rcar-du/rcar_du_vsp.h	2016-10-26 00:01:12.920607110 +0900
+@@ -70,7 +70,7 @@  void rcar_du_vsp_disable(struct rcar_du_
+ void rcar_du_vsp_atomic_begin(struct rcar_du_crtc *crtc);
+ void rcar_du_vsp_atomic_flush(struct rcar_du_crtc *crtc);
+ #else
+-static inline int rcar_du_vsp_init(struct rcar_du_vsp *vsp) { return 0; };
++static inline int rcar_du_vsp_init(struct rcar_du_vsp *vsp) { return -ENXIO; };
+ static inline void rcar_du_vsp_enable(struct rcar_du_crtc *crtc) { };
+ static inline void rcar_du_vsp_disable(struct rcar_du_crtc *crtc) { };
+ static inline void rcar_du_vsp_atomic_begin(struct rcar_du_crtc *crtc) { };

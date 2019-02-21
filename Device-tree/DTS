@@ -1,0 +1,5 @@
+Đọc thuộc tính ra từ dts
+
+renesas,#brs
+
+ret = of_property_read_u32(args.np, "renesas,#brs", &brs_num);

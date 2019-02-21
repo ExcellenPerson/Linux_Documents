@@ -1,0 +1,47 @@
+Cách active một SDHI driver như sau:
+
+- Lấy mạch M3-N r8a77965 làm ví dụ
+
+Bước 1:
+Đầu tiên tích hợp sdhi vào file  device tree r8a77965.dtsi tương tự như r8a7796.dtsi (Vì sao? vì cùng là Salvator, hầu hết giống nhau, hơn nữa file pfc-r8a77965 lại dựa trên r8a7796-M3W)
+
+Bước 2: 
+Update  file drivers/pinctrl/sh-pfc/pfc-r8a77965.c : Nó thiết lập pin cho M3N (các pin đang được dùng chung)
+Update file này dựa theo file 
+drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+
+Bước 3: Update file 
+drivers/mmc/host/renesas_sdhi_internal_dmac.c
+
+
+diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+index 6af946d..fc68f3e 100644
+--- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+@@ -99,6 +99,7 @@ static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
+ static const struct of_device_id renesas_sdhi_internal_dmac_of_match[] = {
+        { .compatible = "renesas,sdhi-r8a7795", .data = &of_rcar_gen3_compatible, },
+        { .compatible = "renesas,sdhi-r8a7796", .data = &of_rcar_gen3_compatible, },
++       { .compatible = "renesas,sdhi-r8a77965", .data = &of_rcar_gen3_compatible, },
+        { .compatible = "renesas,rcar-gen3-sdhi", .data = &of_rcar_gen3_compatible, },
+        {},
+ };
+@@ -277,6 +278,8 @@ static const struct soc_device_attribute gen3_soc_whitelist[] = {
+        { .soc_id = "r8a7795", .revision = "ES2.0" },
+        { .soc_id = "r8a7796", .revision = "ES1.0",
+          .data = (void *)BIT(SDHI_INTERNAL_DMAC_ONE_RX_ONLY) },
++       { .soc_id = "r8a77965", .revision = "ES1.0",
++         .data = (void *)BIT(SDHI_INTERNAL_DMAC_ONE_RX_ONLY) },
+        { .soc_id = "r8a77995", .revision = "ES1.0" },
+        { /* sentinel */ }
+ };
+
+
+
+
+root@linaro-nano:~# [   79.105790] mmc0: new ultra high speed SDR50 SDHC card at address e624
+[   79.112769] mmcblk0: mmc0:e624 SU08G 7.40 GiB 
+[   79.127687]  mmcblk0: p1
+[   79.132628] renesas-cpg-mssr e6150000.clock-controller: Cannot get module clock 815: -2
+[   79.140681] sata_rcar ee300000.sata: failed to add to PM domain always-on: -2
+

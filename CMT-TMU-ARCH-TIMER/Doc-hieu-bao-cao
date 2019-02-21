@@ -1,0 +1,15 @@
+Phát triển, hỗ trợ tính năng upstream và tích hợp các drivers TMU và CMT trên các SOCs và boards. Code sẽ được phát triển theo cách thức gia tăng để phù hợp với các yêu cầu mới nhất upstream.
+
+Mục tiêu chính của nhiệm vụ này là chuẩn bị cho sự hỗ trợ R-CarGen3 mà có thể yêu cầu truy cập từ xa đến phần cứng thật Gen3 hoặc sử dụng của các nền tảng mục tiêu dựa trên FPGA, dù như thế nào SOCs và các boards được liên quan đến họ R-Car Gen2 cũng có thể được bao gồm trên cơ sở nỗ lực tốt nhất, bao gồm cả r8a7790 Lager,
+r8a7791 Koelsch, r8a7794 Alt and r8a7793 Gose.
+
+DT sẽ được sử dụng bất cứ khi nào có thể cùng với hỗ trợ đa nền tảng. Sự cẩn thận nên được thực hiện để dễ dàng quay qua phía LTSI kernel. Các patches sẽ được post đến cộng đồng mailing list cho việc hợp nhất upstream.
+
+
+Loạt series này reworks các ràng buộc CMT DT để cố gắng thỏa thuận với những điều sau đây:
+
+-Các trường hợp phần cứng R-Car Gen2 CMT0 và CMT1 không giống nhau:
+-Thuộc tính renesas,channels-mask không đủ để mô tả sự khác biệt
+- DT nên mô tả phần cứng, không phải sự thực hiện phần mềm.
+
+

@@ -1,0 +1,11 @@
+1. Start the board up.
+2. After the kernel booted up, change the parameter of the kernel serial transfer by the following command. 
+# stty -F /dev/ttyHSCI1 speed 9600 cs8 -cstopb
+# cat /dev/ttyHSCI1
+3. Execute the following command with HOST PC. 
+# stty -F /dev/ttyUSB1 speed 9600 cs8 -cstopb
+# echo “sada” > /dev/ttyUSB1
+
+serial_port_in
+
+sci_serial_read_regs(port);

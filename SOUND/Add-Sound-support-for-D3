@@ -1,0 +1,92 @@
+Sử dụng kernel và device-tree chéo nhau giữa bsp và driver
+
+Lỗi 
+renesas-cpg-mssr e6150000.clock-controller: Cannot get core clock 31: -2
+[    1.706070] ERROR: could not get clock /soc/sound@ec500000:clk_i(29)
+
+Mặc dù so sánh hai file drivers/clk/renesas/r8a77995-cpg-mssr.c của bsp và driver
+
+Đang debug code
+
+https://www.kernel.org/doc/Documentation/devicetree/bindings/sound/renesas%2Crsnd.txt
+
+
+hoan@hoan-pfiev09:~/task_kernel/rns-bkps/renesas-drivers$ git checkout drivers/pinctrl/sh-pfc/pfc-r8a77995.c
+hoan@hoan-pfiev09:~/task_kernel/rns-bkps/renesas-drivers$ git checkout drivers/pinctrl/sh-pfc/sh_pfc.h
+hoan@hoan-pfiev09:~/task_kernel/rns-bkps/renesas-drivers$ git checkout drivers/clk/renesas/r8a77995-cpg-mssr.c
+
+
+
+Cần giải thích tại sao thêm đoạn  này vào thì lại được clock của SOUND.
+
+
+	DEF_FIXED("za2",       R8A77995_CLK_ZA2,   CLK_PLL0D3,    10, 2),
+	DEF_FIXED("za8",       R8A77995_CLK_ZA8,   CLK_PLL0D2,     2, 1),
+	DEF_FIXED("zg",        R8A77995_CLK_ZG,    CLK_PLL0D5,     1, 1),
+
+
+
+root@linaro-nano:~# dmesg | grep sound
+[    1.635057] rcar_sound ec500000.sound: probed
+[    1.682984] simple-scu-audio-card sound: snd-soc-dummy-dai <-> ec500000.sound mapping ok
+[    1.691503] simple-scu-audio-card sound: ak4613-hifi <-> snd-soc-dummy-dai mapping ok
+[    1.699540] simple-scu-audio-card sound: ASoC: no DMI vendor name!
+root@linaro-nano:~# dmesg | grep rsnd
+[    5.135026]   #0: rsnd-ak4613
+root@linaro-nano:~# 
+[    5.132040] ALSA device list:
+[    5.135026]   #0: rsnd-ak4613
+
+
+
+upstream
+root@linaro-nano:~# dmesg | grep sound
+[    1.732283] rcar_sound ec500000.sound: probed
+[    5.719210] func alsa_sound_last_init line 37
+[    5.719221]   No soundcards found.
+root@linaro-nano:~#
+
+Thằng Sound của D3 nó đang dùng simple-scu-audio-card
+
+
+Trong khi H3 sẽ dùng asoc-audio-graph-card sound
+
+ * Documentation:  https://wiki.linaro.org/
+root@linaro-nano:~# 
+root@linaro-nano:~# dmesg | grep sound
+[    2.820573] rcar_sound ec500000.sound: probed
+[    3.465267] asoc-audio-graph-card sound: ak4613-hifi <-> rsnd-dai.0 mapping ok
+[    3.472788] asoc-audio-graph-card sound: i2s-hifi <-> rsnd-dai.1 mapping ok
+[    3.479963] asoc-audio-graph-card sound: i2s-hifi <-> rsnd-dai.2 mapping ok
+[    3.486973] asoc-audio-graph-card sound: ASoC: no DMI vendor name!
+[   10.348799]   #0: rcar-sound
+root@linaro-nano:~# 
+root@linaro-nano:~# dmesg | grep ak461
+[    3.465267] asoc-audio-graph-card sound: ak4613-hifi <-> rsnd-dai.0 mapping ok
+root@linaro-nano:~#
+
+
+
+hoan@hoan-pfiev09:~/task_kernel/rns-bkps/renesas-drivers$ git grep "mapping ok"
+sound/soc/soc-compress.c:       dev_info(rtd->card->dev, "Compress ASoC: %s <-> %s mapping ok\n",
+sound/soc/soc-pcm.c:    dev_info(rtd->card->dev, "%s <-> %s mapping ok\n",
+hoan@hoan-pfiev09:~/task_kernel/rns-bkps/renesas-drivers$ 
+
+
+
+=> Kết luận: Do chưa config cho kernel, 
+=> Rút ra kinh nghiệm, hãy sử dụng config của renesas-bsp cho upstream?
+
+
+
+1, arm64: dts: r8a77995: Add Audio-DMAC device node
+2, arm64: dts: r8a77995: Add Audio device node
+3, arm64: dts: r8a77995-draak: Enable Audio
+
+
+
+4, clk: renesas: r8a77995: Add ZA2 clock
+This patch adds ZA2 clock for the R8A77995 SoC.
+
+
+

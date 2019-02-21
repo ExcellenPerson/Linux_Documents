@@ -1,0 +1,81 @@
+
+ * Documentation:  https://wiki.linaro.org/
+root@linaro-nano:~# echo "he" > /dev/hello
+root@linaro-nano:~# 
+root@linaro-nano:~# cat /dev/hello 
+he
+root@linaro-nano:~# ls /dev/
+autofs           loop4               ptypb     tty25  tty53   ttypa
+block            loop5               ptypc     tty26  tty54   ttypb
+btrfs-control    loop6               ptypd     tty27  tty55   ttypc
+char             loop7               ptype     tty28  tty56   ttypd
+console          mem                 ptypf     tty29  tty57   ttype
+core             memory_bandwidth    random    tty3   tty58   ttypf
+cpu_dma_latency  mmcblk0             shm       tty30  tty59   urandom
+cuse             mmcblk0boot0        snapshot  tty31  tty6    vcs
+disk             mmcblk0boot1        snd       tty32  tty60   vcs1
+fd               mmcblk0rpmb         stderr    tty33  tty61   vcs2
+full             mmcblk1             stdin     tty34  tty62   vcs3
+fuse             mmcblk1p1           stdout    tty35  tty63   vcs4
+gpiochip0        net                 tty       tty36  tty7    vcs5
+gpiochip1        network_latency     tty0      tty37  tty8    vcs6
+gpiochip2        network_throughput  tty1      tty38  tty9    vcs7
+gpiochip3        null                tty10     tty39  ttyS0   vcsa
+gpiochip4        port                tty11     tty4   ttyS1   vcsa1
+gpiochip5        ptmx                tty12     tty40  ttyS2   vcsa2
+gpiochip6        ptp0                tty13     tty41  ttyS3   vcsa3
+gpiochip7        pts                 tty14     tty42  ttySC0  vcsa4
+hello            ptyp0               tty15     tty43  ttySC1  vcsa5
+i2c-2            ptyp1               tty16     tty44  ttyp0   vcsa6
+i2c-4            ptyp2               tty17     tty45  ttyp1   vcsa7
+i2c-7            ptyp3               tty18     tty46  ttyp2   vfio
+kmsg             ptyp4               tty19     tty47  ttyp3   vga_arbiter
+log              ptyp5               tty2      tty48  ttyp4   watchdog
+loop-control     ptyp6               tty20     tty49  ttyp5   watchdog0
+loop0            ptyp7               tty21     tty5   ttyp6   zero
+loop1            ptyp8               tty22     tty50  ttyp7
+loop2            ptyp9               tty23     tty51  ttyp8
+loop3            ptypa               tty24     tty52  ttyp9
+root@linaro-nano:~# device_open /dev/ttySC
+ttySC0  ttySC1  
+root@linaro-nano:~# device_open /dev/ttySC
+ttySC0  ttySC1  
+root@linaro-nano:~# device_open /dev/ttySC0 
+-bash: device_open: command not found
+root@linaro-nano:~# cd /home/hoan/
+root@linaro-nano:/home/hoan# insmod chardev.ko 
+[  373.119936] chardev: loading out-of-tree module taints kernel.
+[  373.125814] chardev: module license 'unspecified' taints kernel.
+[  373.131836] Disabling lock debugging due to kernel taint
+[  373.137497] I was assigned major number 241. To talk to
+[  373.142755] the driver, create a dev file with
+[  373.147476] 'mknod /dev/chardev-tes c 241 0'.
+[  373.152058] Try various minor numbers. Try to cat and echo to
+[  373.157825] the device file.
+[  373.160705] Remove the device file and module when done.
+root@linaro-nano:/home/hoan# mknod /dev/chardev-tes c 241 0
+root@linaro-nano:/home/hoan# 
+root@linaro-nano:/home/hoan# 
+root@linaro-nano:/home/hoan# ls /dev/chardev-tes 
+/dev/chardev-tes
+root@linaro-nano:/home/hoan# 
+root@linaro-nano:/home/hoan# 
+root@linaro-nano:/home/hoan# cat /dev/chardev-tes 
+I already told you 0 times Hello world!
+root@linaro-nano:/home/hoan# 
+root@linaro-nano:/home/hoan# 
+root@linaro-nano:/home/hoan# cat /dev/chardev-tes 
+I already told you 1 times Hello world!
+root@linaro-nano:/home/hoan# cat /dev/chardev-tes 
+I already told you 2 times Hello world!
+root@linaro-nano:/home/hoan# cat /dev/chardev-tes 
+I already told you 3 times Hello world!
+root@linaro-nano:/home/hoan# cat /dev/chardev-tes 
+I already told you 4 times Hello world!
+root@linaro-nano:/home/hoan# cat /dev/chardev-tes 
+I already told you 5 times Hello world!
+root@linaro-nano:/home/hoan# cat /dev/chardev-tes 
+I already told you 6 times Hello world!
+root@linaro-nano:/home/hoan# cat /dev/chardev-tes 
+I already told you 7 times Hello world!
+root@linaro-nano:/home/hoan# 

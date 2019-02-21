@@ -1,0 +1,7 @@
+[    2.502170] file drivers/clk/clk.c func __clk_lookup line 423 name lvds-pll.0 core->name lvds-pll.0 core->parent->name lvds core->parent->parent->name s2d1
+[    2.502179] file drivers/gpu/drm/rcar-du/rcar_du_crtc.c func rcar_du_crtc_create line 1043   name lvds-pll.0
+[    2.516270] file drivers/gpu/drm/rcar-du/rcar_du_crtc.c func rcar_du_crtc_create line 1059 hwindex 0 rcrtc->mmio_offset 0
+[    2.526410] file drivers/clk/clk.c func __clk_lookup line 423 name lvds-pll.1 core->name lvds-pll.1 core->parent->name lvds core->parent->parent->name s2d1
+[    2.537477] file drivers/gpu/drm/rcar-du/rcar_du_crtc.c func rcar_du_crtc_create line 1043   name lvds-pll.1
+[    2.551436] file drivers/gpu/drm/rcar-du/rcar_du_crtc.c func rcar_du_crtc_create line 1059 hwindex 1 rcrtc->mmio_offset 196608
+

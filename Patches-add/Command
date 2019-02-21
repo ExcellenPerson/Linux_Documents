@@ -1,0 +1,178 @@
+git grep tpu | grep renesas
+git grep cmt | grep renesas
+git grep tmu | grep renesas
+
+
+Đọc HWM mà tìm các thiết bị nhá.
+
+Giả sử như đọc file r8a77965-cpg-mssr.c thấy đoạn DEF_GEN3_Z("zg",        R8A7796_CLK_ZG, CLK_TYPE_GEN3_ZG, CLK_PLL4, 4), chưa hiểu
+
+thì đọc phần Clock Pulse Generator (CPG) của HWM phần  mà tìm nhá.
+
+
+Clock ZGφ cần thêm cho M3N
+
+
+gsx: gsx@fd000000 {
+			compatible = "renesas,gsx";
+			reg = <0 0xfd000000 0 0x40000>;
+			interrupts = <GIC_SPI 119 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&cpg CPG_MOD 112>;
+			operating-points-v2 = <&gsx_opp0>, <&gsx_opp1>,
+					      <&gsx_opp2>, <&gsx_opp3>,
+					      <&gsx_opp4>, <&gsx_opp5>,
+					      <&gsx_opp6>, <&gsx_opp7>;
+			power-domains = <&sysc R8A7796_PD_3DG_B>;
+			resets = <&cpg 112>;
+		};
+
+device-tree tham chiếu đến resets = <&cpg 112>; như vậy nó reset dựa vào reset clock?.
+
+
+PowerVR GX6650
+
+
+
+Tìm cái fdp clock
+
+VIDEO_RENESAS_FDP1
+
+
+
+
+r8a77965
+arm,armv8-timer
+timer {                                                |  -----------------------------------------------------------------------
+                          compatible = "arm,armv8-timer";                |  -----------------------------------------------------------------------
+                          interrupts = <GIC_PPI 13 
+
+
+prr: chipid@fff00044 {                                 |  -----------------------------------------------------------------------
+                          compatible = "renesas,prr";                    |  -----------------------------------------------------------------------
+                          reg = <0 0xfff00044 0 4>;                      |  -----------------------------------------------------------------------
+                  };  
+
+
+
+
+gsx
+
+
+vcplf
+
+
+vdpb
+
+
+fcpcs
+
+
+Đang làm FDP
+
+Đến phần nguyên do gây panic là do device-tree
+Cập nhật device-tree của bsp vào driver;
+
+Cần so sánh log giữa bsp và driver của M3N để cập nhật patches
+
+Tìm hiểu cái prr nhưng không hiểu tác dụng của nó lắm.
+
+
+
+
+
+
+Note command 
+
+git grep sdhi0 | grep r8a7795
+
+Lỗi báo chưa có pin
+
+phải tìm cả trong file pfc nữa nhá.
+
+drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+
+
+	modified:   arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts
+	modified:   arch/arm64/boot/dts/renesas/r8a77965.dtsi
+	modified:   arch/arm64/boot/dts/renesas/salvator-common.dtsi
+	modified:   drivers/ata/sata_rcar.c
+	modified:   drivers/clk/renesas/r8a77965-cpg-mssr.c
+	modified:   drivers/mmc/host/renesas_sdhi_core.c
+	modified:   drivers/mmc/host/renesas_sdhi_internal_dmac.c
+	modified:   drivers/mmc/host/renesas_sdhi_sys_dmac.c
+	modified:   drivers/mmc/host/sh_mmcif.c
+	modified:   drivers/pinctrl/sh-pfc/pfc-r8a77965.c
+
+
+
+Xem lại dựa vào r8a7795-es1.1 nhá, vì nó đang chạy được.
+
+
+73e18b2 soc: renesas: Identify R-Car M3-W ES1.1
+
+
+21bffe5
+
+
+hoan@hoan-pfiev09:~/renesas-bsp$ git pull 
+remote: Counting objects: 494, done.
+remote: Compressing objects: 100% (159/159), done.
+remote: Total 494 (delta 335), reused 493 (delta 335)
+Receiving objects: 100% (494/494), 483.06 KiB | 0 bytes/s, done.
+Resolving deltas: 100% (335/335), done.
+From git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas-bsp
+   118adc5..5fd4690  master     -> origin/master
+ * [new branch]      v4.14/rcar-3.7.2.rc1 -> origin/v4.14/rcar-3.7.2.rc1
+ * [new tag]         rcar-3.7.2.rc1 -> rcar-3.7.2.rc1
+Updating 118adc5..5fd4690
+Fast-forward
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi         |  23 +++++------------
+ arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts   |   1 +
+ arch/arm64/boot/dts/renesas/r8a77995-draak.dts   |   1 +
+ arch/arm64/boot/dts/renesas/salvator-common.dtsi |   2 +-
+ arch/arm64/configs/defconfig                     |   6 +++++
+ drivers/clk/renesas/r8a7796-cpg-mssr.c           |  25 ++++++-------------
+ drivers/dma/sh/rcar-dmac.c                       | 112 ++++++++++++++++++++++++++++++++++-------------------------------------------------
+ drivers/gpu/drm/bridge/dumb-vga-dac.c            |  19 ++++++++++++++
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.c           |  55 +++++++++++++++++++++++++++++++++--------
+ drivers/gpu/drm/rcar-du/rcar_du_drv.c            |  17 +++++++++++--
+ drivers/gpu/drm/rcar-du/rcar_du_drv.h            |   2 ++
+ drivers/gpu/drm/rcar-du/rcar_du_encoder.c        |   9 +++----
+ drivers/gpu/drm/rcar-du/rcar_du_group.c          |  75 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c        |  67 +++++++++++++++++++++++++++++++++++++-------------
+ drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.h        |   2 ++
+ drivers/gpu/drm/rcar-du/rcar_du_plane.c          |  17 +++++++++++--
+ drivers/gpu/drm/rcar-du/rcar_du_vsp.c            |  39 ++++++++++++++++++++++++++---
+ drivers/gpu/drm/rcar-du/rcar_lvds_regs.h         |   4 +--
+ drivers/media/i2c/adv748x/adv748x-hdmi.c         |  14 ++++++++---
+ drivers/media/platform/rcar-vin/rcar-core.c      |  16 ++++++++++--
+ drivers/media/platform/rcar-vin/rcar-csi2.c      |  77 +++++++++++++++++++++++++++++++++++++++++++--------------
+ drivers/media/platform/rcar-vin/rcar-dma.c       |  59 +++++++++++++++++++++++++++++++++++++++-----
+ drivers/media/platform/vsp1/vsp1_drm.c           |  14 ++++++-----
+ drivers/media/platform/vsp1/vsp1_drv.c           |   4 +++
+ drivers/media/platform/vsp1/vsp1_pipe.h          |   4 +++
+ drivers/mmc/core/host.c                          |  13 +++++++++-
+ drivers/mmc/core/mmc.c                           |  13 +++++++---
+ drivers/mmc/host/renesas_sdhi_core.c             |  17 -------------
+ drivers/mmc/host/tmio_mmc.h                      |   6 -----
+ drivers/mmc/host/tmio_mmc_core.c                 |   1 -
+ drivers/of/of_mdio.c                             |   6 ++---
+ drivers/pci/host/pcie-rcar.c                     |   6 +++--
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c         |   5 ++++
+ drivers/pinctrl/sh-pfc/pfc-r8a7796.c             |  35 +++++++-------------------
+ drivers/soc/renesas/renesas-soc.c                |   4 ++-
+ drivers/spi/spi-sh-msiof.c                       |   5 ++--
+ include/linux/mmc/host.h                         |   2 ++
+ kernel/sched/fair.c                              |  95 ++++++++++++++++++++++++++++++++++++++++++++++++++--------------------
+ kernel/sched/sched.h                             |  16 ++++++------
+ kernel/sched/topology.c                          |  52 +++++++++++++++++++++++++++++++++------
+ sound/soc/sh/rcar/core.c                         |  17 ++++++++++++-
+ sound/soc/sh/rcar/ssi.c                          |  37 ++++++++++++++++++----------
+ 42 files changed, 694 insertions(+), 300 deletions(-)
+
+
+
+
+
+
+

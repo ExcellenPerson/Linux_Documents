@@ -1,0 +1,41 @@
+Lots of type casts are going to just "work well". However, this is not very strict. Nothing stops you from casting a u32 to a u32 * and dereference it, but this is not following the kernel API and is prone to errors.
+
+__iomem is a cookie used by Sparse, a tool used to find possible coding faults in the kernel. If you don't compile your kernel code with Sparse enabled, __iomem will be ignored anyway.
+
+Use Sparse by first installing it, and then adding C=1 to your make call. For example, when buidling a module, use:
+
+make -C $KPATH M=$PWD C=1 modules
+__iomem is defined like this:
+
+# define __iomem        __attribute__((noderef, address_space(2)))
+Adding (and requiring) a cookie like __iomem for all I/O accesses is a way to be stricter and avoid programming errors. You don't want to read/write from/to I/O memory regions with absolute addresses because you're usually using virtual memory. Thus,
+
+void __iomem *ioremap(phys_addr_t offset, unsigned long size);
+is usually called to get the virtual address of an I/O physical address offset, for a specified length size in bytes. ioremap() returns a pointer with an __iomem cookie, so this may now be used with inline functions like readl()/writel() (although it's now preferable to use the more explicit macros ioread32()/iowrite32(), for example), which accept __iomem addresses.
+
+Also, the noderef attribute is used by Sparse to make sure you don't dereference an __iomem pointer. Dereferencing should work on some architecture where the I/O is really memory-mapped, but other architectures use special instructions for accessing I/Os and in this case, dereferencing won't work.
+
+Let's look at an example:
+
+void *io = ioremap(42, 4);
+Sparse is not happy:
+
+warning: incorrect type in initializer (different address spaces)
+    expected void *io
+    got void [noderef] <asn:2>*
+Or:
+
+u32 __iomem* io = ioremap(42, 4);
+pr_info("%x\n", *io);
+Sparse is not happy either:
+
+warning: dereference of noderef expression
+In the last example, the first line is correct, because ioremap() returns its value to an __iomem variable. But then, we deference it, and we're not supposed to.
+
+This makes Sparse happy:
+
+void __iomem* io = ioremap(42, 4);
+pr_info("%x\n", ioread32(io));
+Bottom line: always use __iomem where it's required (as a return type or as a parameter type), and use Sparse to make sure you did so. Also: do not dereference an __iomem pointer.
+
+Edit: Here's a great LWN article about the inception of __iomem and functions using it.

@@ -1,0 +1,4 @@
+ý tưởng: Hiện có 2 cổng serial, một cổng chính là console debug Serial0, cổng còn lại là Serial1 
+
+Muốn viết lại driver UART Serial1 với việc thêm source code và sửa device-tree
+(Thực ra là 2 file driver ban đầu giống nhau sẽ được prove riêng)

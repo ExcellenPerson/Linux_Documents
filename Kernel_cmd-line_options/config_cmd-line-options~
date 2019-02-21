@@ -1,0 +1,18 @@
+Giả sử cần cấu hình 
+"fb.lockless_register_fb=1 "
+dùng kernel cmdline option.
+
+setenv bootargs 'console=ttySC0,115200 ignore_loglevel consoleblank=0 rw root=/dev/nfs nfsroot=192.168.1.8:/tftpboot/rootfs ip=192.168.1.18 fb.lockless_register_fb=0'
+
+
+Trong khi 
+
+fb.lockless_register_fb được định nghĩa tại
+->drivers/videos/fbdev/core/fbmem.c
+
+
+
+static bool lockless_register_fb;
+module_param_named_unsafe(lockless_register_fb, lockless_register_fb, bool, 0400);
+MODULE_PARM_DESC(lockless_register_fb,
+	"Lockless framebuffer registration for debugging [default=off]");

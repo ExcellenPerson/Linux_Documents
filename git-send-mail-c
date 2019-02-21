@@ -1,0 +1,30 @@
+git send-email --suppress-cc=all --to=broonie@kernel.org --to=geert+renesas@glider.be --to=linux-spi@vger.kernel.org --cc=kuninori.morimoto.gx@renesas.com --cc=yoshihiro.shimoda.uh@renesas.com --cc=ryusuke.sakato.bx@renesas.com --cc=linux-renesas-soc@vger.kernel.org --cc=nv-dung@jinso.co.jp --cc=h-inayoshi@jinso.co.jp --cc=cm-hiep@jinso.co.jp ~/QSPI-PATCHES/*
+
+
+
+
+git send-email --suppress-cc=all --to=linux-renesas-soc@vger.kernel.org --to=geert+renesas@glider.be --cc=wsa@sang-engineering.com --cc=kuninori.morimoto.gx@renesas.com --cc=yoshihiro.shimoda.uh@renesas.com --cc=h-inayoshi@jinso.co.jp --cc=nv-dung@jinso.co.jp --cc=na-hoan@jinso.co.jp --cc=cv-dong@jinso.co.jp
+
+
+4) Tao patches de gui
+
+ #cd /path/to/linux-xxx
+ #git format-patch --cover-letter -o /home/jinso02/QSPI-PATCHES/ HEAD~1 (vidu: 1 patch tinh tu HEAD)
+git format-patch -o /home/jinso02/QSPI-PATCHES/ HEAD~1
+ #se tao ra 6patch (0000 ~ 0005) trong thu muc patch-dir
+
+
+#test
+git send-email --suppress-cc=all --to=na-hoan@jinso.co.jp
+
+git commit -m "pinctrl: sh-pfc: r8a77965: add Audio SSI pin support" -m $'Add Audio SSI pin support for for r8a77965\n' -s
+
+#git --in-reply-to example
+hoan@hoan-pfiev09:~$ git send-email --suppress-cc=all  --to=broonie@kernel.org --to=linux-renesas-soc@vger.kernel.org --to=geert+renesas@glider.be --to=horms+renesas@verge.net.au --in-reply-to 1535535207-2800-2-git-send-email-na-hoan@jinso.co.jp　--cc=magnus.damm@gmail.com --cc=kuninori.morimoto.gx@renesas.com --cc=yoshihiro.shimoda.uh@renesas.com  --cc=h-inayoshi@jinso.co.jp --cc=nv-dung@jinso.co.jp --cc=cv-dong@jinso.co.jp --cc=na-hoan@jinso.co.jp /home/hoan/reply/
+
+
+
+scripts/checkpatch.pl
+
+SPI: 
+git send-email --suppress-cc=all --to=linux-renesas-soc@vger.kernel.org --to=broonie@kernel.org --to=geert+renesas@glider.be --cc=linux-spi@vger.kernel.org --cc=kuninori.morimoto.gx@renesas.com --cc=magnus.damm@gmail.com --cc=yoshihiro.shimoda.uh@renesas.com --cc=h-inayoshi@jinso.co.jp --cc=nv-dung@jinso.co.jp --cc=na-hoan@jinso.co.jp --cc=cv-dong@jinso.co.jp

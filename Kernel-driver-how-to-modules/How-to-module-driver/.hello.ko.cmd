@@ -1,0 +1,1 @@
+cmd_/home/hoan/renesas-drivers/hoan/hello.ko := aarch64-linux-gnu-ld -EL -r  -T ./scripts/module-common.lds --build-id  -o /home/hoan/renesas-drivers/hoan/hello.ko /home/hoan/renesas-drivers/hoan/hello.o /home/hoan/renesas-drivers/hoan/hello.mod.o ;  true

@@ -1,0 +1,46 @@
+1) Dieu kien ban dau
+- SPI controller driver da ton tai va co the Khoi Tao 1 cach chinh xac khi Khoi Dong board.
+(con co ten khac ls SPI flatform driver hoac SPI SOC driver)
+
+- Cac buoc develop SPI flatform
++Doc sample code de tham khao
++Viet code cho SPI flatform driver
+(luu y ve mode tranfer va clock su dung(clock duoc register o board or DT file))
++Chinh sua Kconfig va Makefile de build SPI flatform driver
+
+2) Cach test
+ +Dang ky ket noi voi thiet bi SPI device o board file or DT file
+ (Thiet bi SPI noi voi Board or SOC)
+ +Tao 1 program de cho phep Thong qua SPI flatform driver co the ket noi voi  SPI device
+ +propram nay se cho phep 1 hoac 2 chuc nang: user space hoac sysfs
+ (program ho tro test:cung cap ham read/write de SPI device(driver/spi/spedev.c or bcm89500.c) )
+  .user space (Chuong trinh nguoi dung(user applycation))
+  Do co program ho tro test o tren ma user co the tac dong vao SPI device qua device file: /dev/spidev0.0 tren rootfs
+  .sysfs tren rootfs(/sys/class/)
+  Do co program ho tro test o tren ma nguoi test co the truyen tham so Dieu Khien thiet bi SPI device
+  # cd /sys/class/bcm89500/bcm895000.0/
+  # ls 
+  dev  device@  power/  subsystem@  uevent read write
+
+  # echo 0x02 0x10 0x2A > read
+  # echo 0x02 0x10 0x2A  0x8855 > write
+  
+3) Thong tin tham khao
+/home/dung/work/aprza0a/linux-3.8.13-aprza0a/Documentation/spi
+(xem 2 file: spidev and spidev_test.c)
+
+driver/spi/spedev.c or bcm89500.c
+Xem cach viet program ho tro test
+
+4) Tu chuyen dung
+- program ho tro test:cung cap ham read/write de SPI device
+(program ho tro truy cap SPI device bang ham read/write)
+
+- SPI controller driver
+(con co ten khac ls SPI flatform driver hoac SPI SOC driver)
+
+- SPI device
+(Thiet bi ho tro SPI protocol noi voi Board or SOC)
+
+  
+  

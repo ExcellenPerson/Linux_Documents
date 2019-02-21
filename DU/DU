@@ -1,0 +1,181 @@
+hoan@hoan-pfiev09:~/renesas-bsp$ git grep ES1. | grep rcar-du
+drivers/gpu/drm/rcar-du/rcar_du_crtc.c:	{ .soc_id = "r8a7795", .revision = "ES1.*" },
+drivers/gpu/drm/rcar-du/rcar_du_crtc.c:			 * The H3 ES1.x exhibits dot clock duty cycle stability
+drivers/gpu/drm/rcar-du/rcar_du_crtc.c:			 * reason, so restrict the workaround to H3 ES1.x.
+drivers/gpu/drm/rcar-du/rcar_du_crtc.c:						    DPLLCR_PLCS0_H3ES1X_WA;
+drivers/gpu/drm/rcar-du/rcar_du_regs.h: * PLCS0 is bit 21, but H3 ES1.x requires bit 20 to be set as well. As bit 20
+drivers/gpu/drm/rcar-du/rcar_du_regs.h:#define DPLLCR_PLCS0_H3ES1X_WA	(1 << 20)
+
+
+
+
+git grep r8a77965 | grep rcar-du
+
+hoan@hoan-pfiev09:~/renesas-bsp$ git grep r8a77965 | grep rcar-du
+drivers/gpu/drm/rcar-du/rcar_du_crtc.c:		offset_index = index + 1; /* offset for r8a77965 */
+drivers/gpu/drm/rcar-du/rcar_du_drv.c:static const struct rcar_du_device_info rcar_du_r8a77965_info = {
+drivers/gpu/drm/rcar-du/rcar_du_drv.c:	{ .compatible = "renesas,du-r8a77965", .data = &rcar_du_r8a77965_info },
+drivers/gpu/drm/rcar-du/rcar_du_drv.h: * @skip_ch: skip channel for r8a77965
+drivers/gpu/drm/rcar-du/rcar_du_group.c:			crtc += 1; /* offset for r8a77965 */
+drivers/gpu/drm/rcar-du/rcar_du_vsp.h:#define VSPDL_CH	0	/* VSPDL channel in r8a7795 and r8a77965 */
+hoan@hoan-pfiev09:~/renesas-bsp$ 
+
+
+
+git grep R8A77965 | grep rcar-du
+
+hoan@hoan-pfiev09:~/renesas-bsp$ git grep R8A77965 | grep rcar-du
+drivers/gpu/drm/rcar-du/rcar_du_drv.c:		  | RCAR_DU_FEATURE_R8A77965_REGS,
+drivers/gpu/drm/rcar-du/rcar_du_drv.c:		/* R8A77965 has one RGB output, one LVDS output and one
+drivers/gpu/drm/rcar-du/rcar_du_drv.h:#define RCAR_DU_FEATURE_R8A77965_REGS	(1 << 3)	/* Use R8A77965 registers */
+drivers/gpu/drm/rcar-du/rcar_du_group.c:		    rcar_du_has(rcdu, RCAR_DU_FEATURE_R8A77965_REGS)) {
+drivers/gpu/drm/rcar-du/rcar_du_group.c:		    rcar_du_has(rcdu, RCAR_DU_FEATURE_R8A77965_REGS)) {
+drivers/gpu/drm/rcar-du/rcar_du_group.c:		    rcar_du_has(rcdu, RCAR_DU_FEATURE_R8A77965_REGS))
+drivers/gpu/drm/rcar-du/rcar_du_group.c:	if (rcar_du_has(rcdu, RCAR_DU_FEATURE_R8A77965_REGS) &&
+drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c:	if (rcar_du_has(rcdu, RCAR_DU_FEATURE_R8A77965_REGS) &&
+hoan@hoan-pfiev09:~/renesas-bsp$
+
+
+
+
+=> Chuyển hướng khác
+
+Vì phỏng đoán là ghi vào các thanh ghi khác nhau => đặt debug trực tiếp vào các hàm mà ghi vào các thanh ghi
+
+Phát hiện ra là DS2PR và DS1PR được ghi khác nhau.
+
+hoan@hoan-pfiev09:~/task_kernel/renesas-backport$ git grep DS2PR | grep rcar-du
+drivers/gpu/drm/rcar-du/rcar_du_crtc.c:	rcar_du_group_write(rcrtc->group, rcrtc->index % 2 ? DS2PR : DS1PR,
+drivers/gpu/drm/rcar-du/rcar_du_crtc.c:	rcar_du_group_write(rcrtc->group, rcrtc->index % 2 ? DS2PR : DS1PR, 0);
+drivers/gpu/drm/rcar-du/rcar_du_crtc.c:	rcar_du_group_write(rcrtc->group, rcrtc->index % 2 ? DS2PR : DS1PR, 0);
+drivers/gpu/drm/rcar-du/rcar_du_group.c:	 * Use DS1PR and DS2PR to configure planes priorities and connects the
+drivers/gpu/drm/rcar-du/rcar_du_regs.h:#define DS2PR			0x11024
+hoan@hoan-pfiev09:~/task_kernel/renesas-backport$ 
+
+
+Hàm rcar_du_crtc_update_planes()
+đang có vấn đề
+
+
+
+root@linaro-nano:~# modetest -M rcar-du -P 49:800x600+20+20@XR24
+[   76.873785] func rcar_du_group_write line 114 reg 11024
+[  104.697406] func rcar_du_crtc_update_planes line 444 rcrtc->index 0
+[  104.702714] func rcar_du_group_write line 114 reg 11020
+[  104.709019] func rcar_du_crtc_update_planes line 444 rcrtc->index 3
+testing 800x600@XR24 overlay plane 36
+[  104.714284] func rcar_du_group_write line 114 reg 11024
+[  104.738844] func rcar_du_crtc_update_planes line 444 rcrtc->index 3
+
+[  104.744088] func rcar_du_group_write line 114 reg 11024
+[  111.452136] func rcar_du_crtc_update_planes line 444 rcrtc->index 3
+[  111.457410] func rcar_du_group_write line 114 reg 11024
+[  111.464905] func rcar_du_crtc_update_planes line 444 rcrtc->index 0
+[  111.470221] func rcar_du_group_write line 114 reg 11020
+[  111.476518] func rcar_du_crtc_update_planes line 444 rcrtc->index 3
+root@linaro-nano:~# 
+
+
+root@linaro-nano:~# modetest -M rcar-du -P 54:800x600+20+20@XR24
+[   89.806496] func rcar_du_group_write line 45 reg 11024
+[  125.281263] func rcar_du_crtc_update_planes line 436 rcrtc->index 3
+testing 800x600@XR24 overlay plane 28
+[  125.286431] func rcar_du_group_write line 45 reg 11024
+[  125.317461] func rcar_du_crtc_update_planes line 436 rcrtc->index 3
+
+[  125.322616] func rcar_du_group_write line 45 reg 11024
+[  125.850795] func rcar_du_crtc_update_planes line 436 rcrtc->index 3
+[  125.856037] func rcar_du_group_write line 45 reg 11024
+[  125.865594] func rcar_du_crtc_update_planes line 436 rcrtc->index 3
+root@linaro-nano:~#
+
+
+
+=> Hàm rcar_du_group_setup()
+bên renesas-bsp() được gọi hai lần.
+
+bên renesas-driver() gọi 1 lần.
+
+Bên renesas-bsp()
+rcar_du_crtc_get() được gọi 2 lần
+
+Bên renesas-driver được gọi 1 lần.
+rcar_du_group_get() was called from rcar_du_crtc_get
+
+
+renesas-upstream gọi 1 lần với rcrtc->index 3
+rcar_du_crtc_atomic_begin line 652 rcrtc->index 3
+
+
+=> Goi 2 lan hay không không phải là vấn đề
+vào file r8a77965-salvator-xs.dts xóa ở node du là bên bsp chỉ gọi 1 lần.
+
+
+
+hoan@hoan-pfiev09:~/task_kernel/renesas-backport$ git  grep RPFs | grep rcar-du
+drivers/gpu/drm/rcar-du/rcar_du_vsp.c:	  * The VSP2D (Gen3) has 5 RPFs, but the VSP1D (Gen2) is limited to
+drivers/gpu/drm/rcar-du/rcar_du_vsp.c:	  * 4 RPFs.
+hoan@hoan-pfiev09:~/task_kernel/renesas-backport$
+
+hoan@hoan-pfiev09:~/task_kernel/renesas-backport$ git  grep VSPD | grep rcar-du
+drivers/gpu/drm/rcar-du/rcar_du_group.c:		 * RGB output routing to DPAD0 and VSPD1 routing to DU0/1/2 for
+drivers/gpu/drm/rcar-du/rcar_du_group.c:		 * On Gen3 VSPD routing can't be configured, but DPAD routing
+drivers/gpu/drm/rcar-du/rcar_du_plane.c: * The R8A7790 DU can source frames directly from the VSP1 devices VSPD0 and
+drivers/gpu/drm/rcar-du/rcar_du_plane.c: * VSPD1. VSPD0 feeds DU0/1 plane 0, and VSPD1 feeds either DU2 plane 0 or
+drivers/gpu/drm/rcar-du/rcar_du_plane.c: * Allocate the correct fixed plane when sourcing frames from VSPD0 or VSPD1,
+drivers/gpu/drm/rcar-du/rcar_du_plane.c:	if (state->source == RCAR_DU_PLANE_VSPD0) {
+drivers/gpu/drm/rcar-du/rcar_du_plane.c:		/* VSPD0 feeds plane 0 on DU0/1. */
+drivers/gpu/drm/rcar-du/rcar_du_plane.c:	} else if (state->source == RCAR_DU_PLANE_VSPD1) {
+drivers/gpu/drm/rcar-du/rcar_du_plane.c:		/* VSPD1 feeds plane 1 on DU0/1 or plane 0 on DU2. */
+drivers/gpu/drm/rcar-du/rcar_du_plane.c:	if (state->source == RCAR_DU_PLANE_VSPD1) {
+drivers/gpu/drm/rcar-du/rcar_du_plane.h:	RCAR_DU_PLANE_VSPD0,
+drivers/gpu/drm/rcar-du/rcar_du_plane.h:	RCAR_DU_PLANE_VSPD1,
+drivers/gpu/drm/rcar-du/rcar_du_vsp.c:		.source = RCAR_DU_PLANE_VSPD1,
+hoan@hoan-pfiev09:~/task_kernel/renesas-backport$
+
+
+Đang nghi ngờ do VSPDL chưa được cấu hình trên upstream.
+
+
+VSPDL
+
+renesas,#brs = <2>;
+
+
+
+hoan@hoan-pfiev09:~/task_kernel/renesas-backport$ git grep DPAD0
+drivers/gpu/drm/rcar-du/rcar_du_crtc.c:  * Store RGB routing to DPAD0, the hardware will be configured when
+drivers/gpu/drm/rcar-du/rcar_du_crtc.c: if (output == RCAR_DU_OUTPUT_DPAD0)
+drivers/gpu/drm/rcar-du/rcar_du_crtc.h: RCAR_DU_OUTPUT_DPAD0,
+drivers/gpu/drm/rcar-du/rcar_du_drv.c:          [RCAR_DU_OUTPUT_DPAD0] = {
+drivers/gpu/drm/rcar-du/rcar_du_drv.c:          [RCAR_DU_OUTPUT_DPAD0] = {
+drivers/gpu/drm/rcar-du/rcar_du_drv.c:          [RCAR_DU_OUTPUT_DPAD0] = {
+drivers/gpu/drm/rcar-du/rcar_du_drv.c:          [RCAR_DU_OUTPUT_DPAD0] = {
+drivers/gpu/drm/rcar-du/rcar_du_drv.c:          [RCAR_DU_OUTPUT_DPAD0] = {
+drivers/gpu/drm/rcar-du/rcar_du_drv.c:          [RCAR_DU_OUTPUT_DPAD0] = {
+drivers/gpu/drm/rcar-du/rcar_du_drv.c:          [RCAR_DU_OUTPUT_DPAD0] = {
+drivers/gpu/drm/rcar-du/rcar_du_drv.c:          [RCAR_DU_OUTPUT_DPAD0] = {
+drivers/gpu/drm/rcar-du/rcar_du_drv.c:          [RCAR_DU_OUTPUT_DPAD0] = {
+drivers/gpu/drm/rcar-du/rcar_du_drv.c:          [RCAR_DU_OUTPUT_DPAD0] = {
+drivers/gpu/drm/rcar-du/rcar_du_drv.c:          [RCAR_DU_OUTPUT_DPAD0] = {
+drivers/gpu/drm/rcar-du/rcar_du_drv.h: * The DU has 5 possible outputs (DPAD0/1, LVDS0/1, TCON). Output routing data
+drivers/gpu/drm/rcar-du/rcar_du_group.c:                rcdu->info->routes[RCAR_DU_OUTPUT_DPAD0].possible_crtcs;
+drivers/gpu/drm/rcar-du/rcar_du_group.c:                 * RGB output routing to DPAD0 and VSPD1 routing to DU0/1/2 for
+drivers/gpu/drm/rcar-du/rcar_du_group.c:         * RGB output routing to DPAD0 and VSP1D routing to DU0/1/2 are
+drivers/gpu/drm/rcar-du/rcar_du_group.c:         * CRTC 1 in all other cases to avoid cloning CRTC 0 to DPAD0 and DPAD1
+drivers/pinctrl/sprd/pinctrl-sprd-sc9860.c:     SC9860_SP_EIC_DPAD0_SEL = SPRD_PIN_INFO(76, GLOBAL_CTRL_PIN, 0, 8, 6),
+drivers/pinctrl/sprd/pinctrl-sprd-sc9860.c:     SPRD_PINCTRL_PIN(SC9860_SP_EIC_DPAD0_SEL),
+hoan@hoan-pfiev09:~/task_kernel/renesas-backport$ make -j16
+
+
+
+git log --oneline --grep "plane"
+
+Tim các commit liên quan trên bsp nhá.
+
+
+Ham __rcar_du_group_start_stop chi duocj goi khi dung RGB? 
+Sau khi xoa RGB trong file device-tree, ham nay ko duoc goi khi boot nua.
+
+
+

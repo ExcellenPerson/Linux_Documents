@@ -1,0 +1,57 @@
+void a()
+{
+    /* Your code */
+}
+
+void a_special( char const * caller_name )
+{
+    printf( "a was called from %s", caller_name );
+    a();
+}
+
+#define a() a_special(__func__)
+
+void b()
+{
+    a();
+}
+
+
+
+void rcar_du_group_write(struct rcar_du_group *rgrp, u32 reg, u32 data)
+{
+	rcar_du_write(rgrp->dev, rgrp->mmio_offset + reg, data);
+	if((rgrp->mmio_offset == 262144) && (reg == DSYSR))
+	{
+		printk("file %s func %s line %d rgrp->mmio_offset %d data %d reg %d", __FILE__, __FUNCTION__, __LINE__, rgrp->mmio_offset, data, reg);
+	}
+}
+
+
+void caller_rcar_du_group_write(char const * caller_name, struct rcar_du_group *rgrp, u32 reg, u32 data)
+{
+	printf( "rcar_du_group_write was called from %s", caller_name );
+	rcar_du_group_write(rgrp, reg, data);
+}
+#define rcar_du_group_write(rgrp, reg, data)  caller_rcar_du_group_write(__FUNCTION__, rgrp,reg, data)
+
+
+
+
+
+static void calller(const char * file, const char * func_name, int line )
+{
+	printk("file %s func %s line %d ", file, func_name, line);
+}
+#define nah_debug calller(__FILE__,__FUNCTION__, __LINE__);
+
+
+ void caller_rcar_du_vsp_init(const char* func_name,  struct rcar_du_vsp *vsp, struct device_node *np,
+	     unsigned int crtcs)
+{
+	printk("rcar_du_vsp_init was called by %s", func_name);
+	rcar_du_vsp_init(vsp, np, crtcs);
+}
+
+#define rcar_du_vsp_init(vsp, np, crtcs) caller_rcar_du_vsp_init(__FUNCTION__, vsp, np, crtcs)
+
