@@ -1,0 +1,3 @@
+1: Gặp phải vấn đề không thể ghi vào thanh ghi khi mà chưa enable clock.
+
+Vì sao không gọi hàm clk_prepare_enable() thì không thể  ghi vào các thanh ghi?

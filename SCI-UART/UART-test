@@ -9,3 +9,102 @@
 serial_port_in
 
 sci_serial_read_regs(port);
+h_sci_serial_read_regs(port);
+
+
+root@linaro-nano:~# stty -F /dev/ttyHSCI1 speed 9600 cs8 -cstopb
+[   74.078819] file drivers/tty/serial/h-sci-sh.c func sci_pm line 2156
+[   74.078831] func sci_serial_read_regs SCSMR 0 SCBRR 0 SCSCR 0 SCxSR 0 SCxTDR 0 SCxRDR 0 SCFCR 0 SCFDR 0 SCSPTR 0 SCLSR 0 SCDL 0 SCCKS 0
+[   74.085215] sci_serial_read_regs() was called by file drivers/tty/serial/h-sci-sh.c func sci_pm line 2157
+[   74.097418] func sci_serial_read_regs SCSMR 0 SCBRR 0 SCSCR 0 SCxSR 0 SCxTDR 0 SCxRDR 0 SCFCR 0 SCFDR 0 SCSPTR 0 SCLSR 0 SCDL 0 SCCKS 0
+[   74.106986] sci_serial_read_regs() was called by file drivers/tty/serial/h-sci-sh.c func sci_port_enable line 531
+[   74.119184] func sci_serial_read_regs SCSMR 0 SCBRR ff SCSCR 0 SCxSR 60 SCxTDR 0 SCxRDR 0 SCFCR 0 SCFDR 0 SCSPTR 51 SCLSR 0 SCDL 0 SCCKS 0
+[   74.129445] sci_serial_read_regs() was called by file drivers/tty/serial/h-sci-sh.c func sci_port_enable line 538
+[   74.141890] func sci_serial_read_regs SCSMR 0 SCBRR ff SCSCR 0 SCxSR 60 SCxTDR 0 SCxRDR 0 SCFCR 0 SCFDR 0 SCSPTR 51 SCLSR 0 SCDL 0 SCCKS 0
+[   74.152151] sci_serial_read_regs() was called by file drivers/tty/serial/h-sci-sh.c func sci_port_enable line 545
+[   74.164589] file drivers/tty/serial/h-sci-sh.c func sci_startup line 1582
+[   74.174854] func sci_serial_read_regs SCSMR 0 SCBRR ff SCSCR 0 SCxSR 60 SCxTDR 0 SCxRDR 0 SCFCR 0 SCFDR 0 SCSPTR 51 SCLSR 0 SCDL 0 SCCKS 0
+[   74.181644] sci_serial_read_regs() was called by file drivers/tty/serial/h-sci-sh.c func sci_startup line 1584
+[   74.194073] file drivers/tty/serial/h-sci-sh.c func sci_request_irq line 1349
+[   74.204127] file drivers/tty/serial/h-sci-sh.c func sci_set_termios line 1829
+[   74.211275] func sci_serial_read_regs SCSMR 0 SCBRR ff SCSCR 0 SCxSR 60 SCxTDR 0 SCxRDR 0 SCFCR 0 SCFDR 0 SCSPTR 51 SCLSR 0 SCDL 0 SCCKS 0
+[   74.218423] sci_serial_read_regs() was called by file drivers/tty/serial/h-sci-sh.c func sci_set_termios line 1831
+[   74.230856] file drivers/tty/serial/h-sci-sh.c func sci_set_termios line 1845 termios->c_cflag cbd CSIZE 30 CS7 20 PARENB 100 PARODD 200 CSTOPB 40 termios->c_cflag & CSIZE 48 
+[   74.230856]  termios->c_cflag & PARENB 0 termios->c_cflag & PARODD 0 termios->c_cflag & CSTOPB 0
+[   74.241209] file drivers/tty/serial/h-sci-sh.c func sci_brg_calc line 1667
+[   74.265626] func sci_serial_read_regs SCSMR 0 SCBRR ff SCSCR 0 SCxSR 60 SCxTDR 0 SCxRDR 0 SCFCR 0 SCFDR 0 SCSPTR 51 SCLSR 0 SCDL 0 SCCKS 0
+[   74.272502] sci_serial_read_regs() was called by file drivers/tty/serial/h-sci-sh.c func sci_port_enable line 531
+[   74.284935] func sci_serial_read_regs SCSMR 0 SCBRR ff SCSCR 0 SCxSR 60 SCxTDR 0 SCxRDR 0 SCFCR 0 SCFDR 0 SCSPTR 51 SCLSR 0 SCDL 0 SCCKS 0
+[   74.295196] sci_serial_read_regs() was called by file drivers/tty/serial/h-sci-sh.c func sci_port_enable line 538
+[   74.307632] func sci_serial_read_regs SCSMR 0 SCBRR ff SCSCR 0 SCxSR 60 SCxTDR 0 SCxRDR 0 SCFCR 0 SCFDR 0 SCSPTR 51 SCLSR 0 SCDL 0 SCCKS 0
+[   74.317892] sci_serial_read_regs() was called by file drivers/tty/serial/h-sci-sh.c func sci_port_enable line 545
+[   74.330321] file drivers/tty/serial/h-sci-sh.c func sci_reset line 1769
+[   74.340574] file drivers/tty/serial/h-sci-sh.c func sci_clear_SCxSR line 648
+[   74.347286] file drivers/tty/serial/h-sci-sh.c func sci_init_pins line 677
+[   74.354332] func sci_serial_read_regs SCSMR 0 SCBRR ff SCSCR 32 SCxSR 60 SCxTDR 0 SCxRDR 0 SCFCR 0 SCFDR 0 SCSPTR d1 SCLSR 0 SCDL 60 SCCKS 0
+[   74.361198] sci_serial_read_regs() was called by file drivers/tty/serial/h-sci-sh.c func sci_set_termios line 2127
+[   74.373794] file drivers/tty/serial/h-sci-sh.c func sci_start_rx line 616
+[   74.384133] file drivers/tty/serial/h-sci-sh.c func port_rx_irq_mask line 565
+[   74.390912] file drivers/tty/serial/h-sci-sh.c func sci_start_rx line 619 ctrl 72
+[   74.398038] file drivers/tty/serial/h-sci-sh.c func sci_start_rx line 623 ctrl 72
+[   74.405512] file drivers/tty/serial/h-sci-sh.c func sci_start_rx line 626 ctrl 72
+[   74.412990] func sci_serial_read_regs SCSMR 0 SCBRR ff SCSCR 72 SCxSR 60 SCxTDR 0 SCxRDR 0 SCFCR 0 SCFDR 0 SCSPTR d1 SCLSR 0 SCDL 60 SCCKS 0
+[   74.420464] sci_serial_read_regs() was called by file drivers/tty/serial/h-sci-sh.c func sci_start_rx line 627
+9600
+[   74.433059] file drivers/tty/serial/h-sci-sh.c func sci_start_rx line 628
+[   74.608512] file drivers/tty/serial/h-sci-sh.c func sci_stop_rx line 635
+[   74.615301] file drivers/tty/serial/h-sci-sh.c func port_rx_irq_mask line 565
+[   74.622017] file drivers/tty/serial/h-sci-sh.c func sci_shutdown line 1603
+[   74.629154] file drivers/tty/serial/h-sci-sh.c func sci_stop_rx line 635
+[   74.636021] file drivers/tty/serial/h-sci-sh.c func port_rx_irq_mask line 565
+[   74.642714] file drivers/tty/serial/h-sci-sh.c func sci_stop_tx line 597
+[   74.649847] func sci_serial_read_regs SCSMR 0 SCBRR ff SCSCR 32 SCxSR 60 SCxTDR 0 SCxRDR 0 SCFCR 0 SCFDR 0 SCSPTR d5 SCLSR 0 SCDL 60 SCCKS 0
+[   74.656539] sci_serial_read_regs() was called by file drivers/tty/serial/h-sci-sh.c func sci_stop_tx line 599
+[   74.669140] func sci_serial_read_regs SCSMR 0 SCBRR ff SCSCR 32 SCxSR 60 SCxTDR 0 SCxRDR 0 SCFCR 0 SCFDR 0 SCSPTR d1 SCLSR 0 SCDL 60 SCCKS 0
+[   74.679045] sci_serial_read_regs() was called by file drivers/tty/serial/h-sci-sh.c func sci_stop_tx line 609
+[   74.691652] file drivers/tty/serial/h-sci-sh.c func sci_free_irq line 1373
+[   74.701567] file drivers/tty/serial/h-sci-sh.c func sci_pm line 2156
+[   74.708450] func sci_serial_read_regs SCSMR 0 SCBRR ff SCSCR 2 SCxSR 60 SCxTDR 0 SCxRDR 0 SCFCR 0 SCFDR 0 SCSPTR d5 SCLSR 0 SCDL 60 SCCKS 0
+[   74.714803] sci_serial_read_regs() was called by file drivers/tty/serial/h-sci-sh.c func sci_pm line 2157
+root@linaro-nano:~# 
+root@linaro-nano:~# cat /dev/ttyHSCI1 
+[   74.727326] file drivers/tty/serial/h-sci-sh.c func sci_port_disable line 553
+[   79.767068] file drivers/tty/serial/h-sci-sh.c func sci_pm line 2156
+[   79.774234] func sci_serial_read_regs SCSMR 0 SCBRR ff SCSCR 2 SCxSR 60 SCxTDR 0 SCxRDR 0 SCFCR 0 SCFDR 0 SCSPTR d1 SCLSR 0 SCDL 60 SCCKS 0
+[   79.780596] sci_serial_read_regs() was called by file drivers/tty/serial/h-sci-sh.c func sci_pm line 2157
+[   79.793118] func sci_serial_read_regs SCSMR 0 SCBRR ff SCSCR 2 SCxSR 60 SCxTDR 0 SCxRDR 0 SCFCR 0 SCFDR 0 SCSPTR d5 SCLSR 0 SCDL 60 SCCKS 0
+[   79.802687] sci_serial_read_regs() was called by file drivers/tty/serial/h-sci-sh.c func sci_port_enable line 531
+[   79.815209] func sci_serial_read_regs SCSMR 0 SCBRR ff SCSCR 2 SCxSR 60 SCxTDR 0 SCxRDR 0 SCFCR 0 SCFDR 0 SCSPTR d5 SCLSR 0 SCDL 60 SCCKS 0
+[   79.825471] sci_serial_read_regs() was called by file drivers/tty/serial/h-sci-sh.c func sci_port_enable line 538
+[   79.837998] func sci_serial_read_regs SCSMR 0 SCBRR ff SCSCR 2 SCxSR 60 SCxTDR 0 SCxRDR 0 SCFCR 0 SCFDR 0 SCSPTR d1 SCLSR 0 SCDL 60 SCCKS 0
+[   79.848261] sci_serial_read_regs() was called by file drivers/tty/serial/h-sci-sh.c func sci_port_enable line 545
+[   79.860784] file drivers/tty/serial/h-sci-sh.c func sci_startup line 1582
+[   79.871049] func sci_serial_read_regs SCSMR 0 SCBRR ff SCSCR 2 SCxSR 60 SCxTDR 0 SCxRDR 0 SCFCR 0 SCFDR 0 SCSPTR d5 SCLSR 0 SCDL 60 SCCKS 0
+[   79.877841] sci_serial_read_regs() was called by file drivers/tty/serial/h-sci-sh.c func sci_startup line 1584
+[   79.890365] file drivers/tty/serial/h-sci-sh.c func sci_request_irq line 1349
+[   79.900399] genirq: Flags mismatch irq 116. 00000004 ((null)) vs. 00000004 ((null))
+[   79.915185] file drivers/tty/serial/h-sci-sh.c func sci_set_termios line 1829
+[   79.915192] func sci_serial_read_regs SCSMR 0 SCBRR ff SCSCR 2 SCxSR 60 SCxTDR 0 SCxRDR 0 SCFCR 0 SCFDR 0 SCSPTR d1 SCLSR 0 SCDL 60 SCCKS 0
+[   79.922325] sci_serial_read_regs() was called by file drivers/tty/serial/h-sci-sh.c func sci_set_termios line 1831
+[   79.934849] file drivers/tty/serial/h-sci-sh.c func sci_set_termios line 1845 termios->c_cflag cbd CSIZE 30 CS7 20 PARENB 100 PARODD 200 CSTOPB 40 termios->c_cflag & CSIZE 48 
+[   79.934849]  termios->c_cflag & PARENB 0 termios->c_cflag & PARODD 0 termios->c_cflag & CSTOPB 0
+[   79.945198] file drivers/tty/serial/h-sci-sh.c func sci_brg_calc line 1667
+[   79.969615] func sci_serial_read_regs SCSMR 0 SCBRR ff SCSCR 2 SCxSR 60 SCxTDR 0 SCxRDR 0 SCFCR 0 SCFDR 0 SCSPTR d5 SCLSR 0 SCDL 60 SCCKS 0
+[   79.976492] sci_serial_read_regs() was called by file drivers/tty/serial/h-sci-sh.c func sci_port_enable line 531
+[   79.989016] func sci_serial_read_regs SCSMR 0 SCBRR ff SCSCR 2 SCxSR 60 SCxTDR 0 SCxRDR 0 SCFCR 0 SCFDR 0 SCSPTR d5 SCLSR 0 SCDL 60 SCCKS 0
+[   79.999275] sci_serial_read_regs() was called by file drivers/tty/serial/h-sci-sh.c func sci_port_enable line 538
+[   80.011805] func sci_serial_read_regs SCSMR 0 SCBRR ff SCSCR 2 SCxSR 60 SCxTDR 0 SCxRDR 0 SCFCR 0 SCFDR 0 SCSPTR d1 SCLSR 0 SCDL 60 SCCKS 0
+[   80.022087] sci_serial_read_regs() was called by file drivers/tty/serial/h-sci-sh.c func sci_port_enable line 545
+[   80.034607] file drivers/tty/serial/h-sci-sh.c func sci_reset line 1769
+[   80.044861] file drivers/tty/serial/h-sci-sh.c func sci_clear_SCxSR line 648
+[   80.051574] file drivers/tty/serial/h-sci-sh.c func sci_init_pins line 677
+[   80.058619] func sci_serial_read_regs SCSMR 0 SCBRR ff SCSCR 32 SCxSR 60 SCxTDR 0 SCxRDR 0 SCFCR 0 SCFDR 0 SCSPTR d1 SCLSR 0 SCDL 60 SCCKS 0
+[   80.065486] sci_serial_read_regs() was called by file drivers/tty/serial/h-sci-sh.c func sci_set_termios line 2127
+[   80.078081] file drivers/tty/serial/h-sci-sh.c func sci_start_rx line 616
+[   80.088419] file drivers/tty/serial/h-sci-sh.c func port_rx_irq_mask line 565
+[   80.095199] file drivers/tty/serial/h-sci-sh.c func sci_start_rx line 619 ctrl 72
+[   80.102326] file drivers/tty/serial/h-sci-sh.c func sci_start_rx line 623 ctrl 72
+[   80.109800] file drivers/tty/serial/h-sci-sh.c func sci_start_rx line 626 ctrl 72
+[   80.117277] func sci_serial_read_regs SCSMR 0 SCBRR ff SCSCR 72 SCxSR 60 SCxTDR 0 SCxRDR 0 SCFCR 0 SCFDR 0 SCSPTR d1 SCLSR 0 SCDL 60 SCCKS 0
+[   80.124751] sci_serial_read_regs() was called by file drivers/tty/serial/h-sci-sh.c func sci_start_rx line 627
+

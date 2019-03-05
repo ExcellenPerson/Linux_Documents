@@ -1,0 +1,244 @@
+Sau khi probe thông thường như các driver khác:
+
+static int h_sh_sci_probe(struct platform_device *pdev)
+{
+	struct device_node *np = pdev->dev.of_node;
+	struct device *dev = &pdev->dev;
+	struct sci_port *sp;
+	int uart_idx = 0;
+	struct resource *res_mem;
+	struct uart_port *port;
+	int ret;
+	u8 reg_val;
+
+
+	h_debug;
+
+	uart_idx = of_alias_get_id(np, "serial");
+	if (uart_idx < 0 )
+		return -EINVAL;
+
+	printk("file %s func %s line %d uart_idx %d pdev->name %s", __FILE__, __FUNCTION__, __LINE__, uart_idx, pdev->name );
+
+	res_mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+	if (!res_mem)
+		return -EINVAL;
+
+	sp = devm_kzalloc(&pdev->dev, sizeof(*sp), GFP_KERNEL);
+	if (!sp)
+		return -ENOMEM;
+
+	sp = &sci_ports[uart_idx];
+
+	sp->idx = uart_idx;
+	sp->dev = dev;
+	sp->clks = devm_clk_get(dev, "scif_clk");
+	printk("clk %s is %pC rate %lu\n", "scif_clk",
+			sp->clks, clk_get_rate(sp->clks));
+
+	port = &sp->port;
+	platform_set_drvdata(pdev, sp);
+
+	port->iotype	= UPIO_MEM;
+	port->mapbase	= res_mem->start;
+	port->ops	= &h_sh_sci_uart_ops;
+	port->flags	= UPF_BOOT_AUTOCONF;
+	port->dev	= &pdev->dev;
+	port->fifosize	= 8;
+	port->uartclk	= clk_get_rate(sp->clks);
+	port->line	= uart_idx;
+
+
+	mutex_lock(&sci_uart_registration_lock);
+	if (!h_sh_sci_uart_driver.state) {
+		ret = uart_register_driver(&h_sh_sci_uart_driver);
+		if (ret) {
+			mutex_unlock(&sci_uart_registration_lock);
+			return ret;
+		}
+	}
+	mutex_unlock(&sci_uart_registration_lock);
+
+	ret = uart_add_one_port(&h_sh_sci_uart_driver, &sp->port);
+	if (ret) {
+		printk("file %s func %s line %d ret %d", __FILE__, __FUNCTION__, __LINE__, ret);
+	}
+
+	port->membase = devm_ioremap_nocache(port->dev, port->mapbase,
+						resource_size(res_mem));
+
+	reg_val = ioread8(port->membase + 0x04);
+	printk("file %s func %s line %d reg_val %x", __FILE__, __FUNCTION__, __LINE__, reg_val);
+
+
+	port->serial_in		= h_sci_serial_in;
+	port->serial_out	= h_sci_serial_out;
+
+
+	return 0;
+}
+
+
+
+- Trong đó: 
+
+Cần ghi danh 
+
+static const struct uart_ops h_sh_sci_uart_ops = {
+	.tx_empty	= h_sh_sci_uart_tx_empty,
+	.get_mctrl	= h_sh_sci_uart_get_mctrl,
+	.set_mctrl	= h_sh_sci_uart_set_mctrl,
+	.start_tx	= h_sh_sci_uart_start_tx,
+	.stop_tx	= h_sh_sci_uart_stop_tx,
+	.stop_rx	= h_sh_sci_uart_stop_rx,
+	.break_ctl	= h_sh_sci_uart_break_ctl,
+	.startup	= h_sh_sci_uart_startup,
+	.shutdown	= h_sh_sci_uart_shutdown,
+	.set_termios	= h_sh_sci_uart_set_termios,
+	.pm		= h_sh_sci_uart_pm,
+	.type		= h_sh_sci_uart_type,
+	.release_port	= h_sh_sci_uart_release_port,
+	.request_port	= h_sh_sci_uart_request_port,
+	.config_port	= h_sh_sci_uart_config_port,
+	.verify_port	= h_sh_sci_uart_verify_port,
+};
+
+
+- Sử dụng hàm 
+
+	ret = uart_add_one_port(&h_sh_sci_uart_driver, &sp->port);
+	if (ret) {
+		printk("file %s func %s line %d ret %d", __FILE__, __FUNCTION__, __LINE__, ret);
+	}
+
+
+- Nhưng đôi khi vẫn lỗi, khi đó ta dùng như sau
+
+	mutex_lock(&sci_uart_registration_lock);
+	if (!h_sh_sci_uart_driver.state) {
+		ret = uart_register_driver(&h_sh_sci_uart_driver);
+		if (ret) {
+			mutex_unlock(&sci_uart_registration_lock);
+			return ret;
+		}
+	}
+	mutex_unlock(&sci_uart_registration_lock);
+
+
+Trước khi gọi ret = uart_add_one_port(&h_sh_sci_uart_driver, &sp->port);
+
+
+
+
+
+
+Nếu xong bước này, thấy trong /dev có node ta đã probe driver thành công
+ví dụ /dev/ttyHSCI
+
+Lúc này cat /dev/ttyHSCI sẽ thấy lỗi. Input/ouput error
+
+
+
+Bước tiếp theo: 
+ 
+Triển khai hàm 
+h_sh_sci_uart_config_port();
+
+Trong hàm này, Cần thiết lập 
+
+port->type;
+
+Ví dụ:
+
+static void h_sh_sci_uart_config_port(struct uart_port* port, int val)
+{
+	h_debug;
+	port->type = 53;
+}
+
+
+
+Khi đó các hàm khác được ghi danh với struct h_sh_sci_uart_ops sẽ được gọi
+
+ví dụ:
+
+root@linaro-nano:~# cat /dev/ttyHNASCI1 
+[   40.397519] file drivers/tty/serial/h-sci-sh-2.c func h_sh_sci_uart_startup line 340
+[   40.397522] file drivers/tty/serial/h-sci-sh-2.c func h_sh_sci_uart_set_termios line 355
+
+
+
+
+
+^C[   40.405300] file drivers/tty/serial/h-sci-sh-2.c func h_sh_sci_uart_set_mctrl line 306
+[   43.472716] file drivers/tty/serial/h-sci-sh-2.c func h_sh_sci_uart_tx_empty line 291
+[   43.480661] file drivers/tty/serial/h-sci-sh-2.c func h_sh_sci_uart_set_mctrl line 306
+[   43.488494] file drivers/tty/serial/h-sci-sh-2.c func h_sh_sci_uart_stop_rx line 324
+
+root@linaro-nano:~# 
+
+
+- Tại sao khi enable clock mới đọc được giá trị các thanh ghi?
+
+static void sci_port_enable(struct sci_port *sci_port)
+{
+	unsigned int i;
+
+	//h_debug;
+
+	sci_serial_read_regs(&sci_port->port);
+
+	if (!sci_port->port.dev)
+		return;
+
+	pm_runtime_get_sync(sci_port->port.dev);
+
+	sci_serial_read_regs(&sci_port->port);
+
+	for (i = 0; i < SCI_NUM_CLKS; i++) {
+		clk_prepare_enable(sci_port->clks[i]);
+		sci_port->clk_rates[i] = clk_get_rate(sci_port->clks[i]);
+	}
+
+	sci_serial_read_regs(&sci_port->port);
+	sci_port->port.uartclk = sci_port->clk_rates[SCI_FCK];
+}
+
+
+PARENB: Là parity enable
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
