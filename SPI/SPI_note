@@ -1,0 +1,5 @@
+Thế nào là bytes giả: dummy bytes, dummy data
+
+Nhớ lại: Trong trường hợp cần đọc 4 bytes từ slave (EEPROM )
+Thì cần gửi đi 4 bytes (giả) để đọc lại 4 bytes (mục đích chính là tạo clock)
+
