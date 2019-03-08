@@ -1,7 +1,11 @@
 1. Start the board up.
 2. After the kernel booted up, change the parameter of the kernel serial transfer by the following command. 
 # stty -F /dev/ttyHSCI1 speed 9600 cs8 -cstopb
+# stty -F /dev/ttyHNASCI1 speed 9600 cs8 -cstopb
+
 # cat /dev/ttyHSCI1
+# cat /dev/ttyHNASCI1
+
 3. Execute the following command with HOST PC. 
 # stty -F /dev/ttyUSB1 speed 9600 cs8 -cstopb
 # echo “sada” > /dev/ttyUSB1
@@ -10,6 +14,24 @@ serial_port_in
 
 sci_serial_read_regs(port);
 h_sci_serial_read_regs(port);
+
+
+
+
+#define SCSMR	0x00	/* Serial Mode Register */
+#define SCBRR	0x04	/* Bit rate Register */
+#define SCSCR	0x08	/* Serial Control Register */
+#define SCFTDR	0x0C	/* Transmit FIFO data register */
+#define SCFSR	0x10	/* Serial status register */
+#define SCFRDR	0x14	/* Receive FIFO data register */
+#define SCFCR	0x18	/* FIFO control register */
+#define SCFDR	0x1C	/* FIFO data count register */
+#define SCSPTR	0x20	/* Serial port register */
+#define SCLSR	0x24	/* Line status register */
+#define SCDL	0x30	/* Frequency division register */
+#define SCCKS	0x34	/* Clock Select register */
+
+
 
 
 root@linaro-nano:~# stty -F /dev/ttyHSCI1 speed 9600 cs8 -cstopb

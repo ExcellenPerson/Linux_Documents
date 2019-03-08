@@ -1,3 +1,6 @@
 1: Gặp phải vấn đề không thể ghi vào thanh ghi khi mà chưa enable clock.
 
 Vì sao không gọi hàm clk_prepare_enable() thì không thể  ghi vào các thanh ghi?
+
+- Tại sao nếu không đọc dữ liệu ra từ thanh ghi dữ liệu nhận (SCFRDR) sẽ không 
+thể xóa được bit trạng thái trong thanh ghi status?
